@@ -1,0 +1,120 @@
+name: Technical Task
+description: Define an implementable engineering task with scope, layers, tests, and done criteria.
+title: "task: "
+labels:
+  - type:technical-task
+  - status:needs-review
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for implementation tasks derived from roadmap stories. Keep the issue small enough for one focused branch and PR.
+
+  - type: textarea
+    id: technical-goal
+    attributes:
+      label: 🎯 Objetivo técnico
+      description: What must be built, validated, or clarified?
+      placeholder: Build the simulator core model so experiments can be represented before adding retry strategies.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 🔧 Descripción
+      description: Explain the technical work in concrete terms.
+      placeholder: Define the minimum domain/application concepts required to run a no-retry experiment later.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 📍 Contexto
+      description: Link this task to roadmap phases, user stories, ADRs, or previous PRs.
+      placeholder: |
+        Relacionado con:
+        - Roadmap phase: Simulator Core
+        - Story: TBD
+        - ADR: TBD
+    validations:
+      required: true
+
+  - type: textarea
+    id: target-layers
+    attributes:
+      label: 🧭 Módulo y capas objetivo
+      placeholder: |
+        Módulo o área probable:
+        Capa dominio:
+        Capa aplicación:
+        Capa infraestructura/adapters:
+        Tests esperados:
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope-in
+    attributes:
+      label: 🧩 Alcance técnico — Incluye
+      placeholder: |
+        - [ ] Definir value objects necesarios.
+        - [ ] Implementar caso de uso mínimo.
+        - [ ] Añadir tests significativos.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope-out
+    attributes:
+      label: 🚫 Alcance técnico — No incluye
+      placeholder: |
+        - No implementar retries.
+        - No agregar Resilience4j todavía.
+        - No agregar frontend.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: technical-impact
+    attributes:
+      label: 🏗️ Impacto técnico
+      options:
+        - label: Backend
+        - label: Dominio / modelo
+        - label: Aplicación / casos de uso
+        - label: Infraestructura / adapters
+        - label: Contratos HTTP / DTOs
+        - label: Configuración
+        - label: Tests
+        - label: Documentación
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: ✅ Criterios de finalización (DoD)
+      placeholder: |
+        - [ ] El comportamiento queda implementado y testeado.
+        - [ ] ./mvnw verify pasa desde la raíz.
+        - [ ] La fase queda funcional y entendible antes de continuar.
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: 📎 Notas técnicas
+      description: Add constraints, trade-offs, architecture references, or implementation notes.
+      placeholder: Keep domain free from Spring and framework-specific exceptions.
+    validations:
+      required: false
+
+  - type: input
+    id: estimate
+    attributes:
+      label: ⏱️ Estimación sugerida
+      description: Use small relative values such as 1, 2, 3, or 5.
+      placeholder: "2"
+    validations:
+      required: false

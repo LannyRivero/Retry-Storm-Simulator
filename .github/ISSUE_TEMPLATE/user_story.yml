@@ -1,0 +1,113 @@
+name: User Story
+description: Define a roadmap capability from the perspective of an engineer or reviewer.
+title: "story: "
+labels:
+  - type:user-story
+  - status:needs-review
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for roadmap-level capabilities. Keep the story focused on user/engineering value, not implementation details.
+
+  - type: textarea
+    id: story
+    attributes:
+      label: Historia
+      description: Describe the story using role, capability, and value.
+      placeholder: |
+        Como engineer
+        Quiero ejecutar un experimento baseline sin retries
+        Para medir el comportamiento base antes de introducir estrategias de resiliencia
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto
+      description: Explain why this story exists and what roadmap problem it supports.
+      placeholder: Retry Storm Simulator needs a reproducible baseline before comparing retries, backoff, jitter, or circuit breaker.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: current-state
+    attributes:
+      label: Estado actual
+      options:
+        - nuevo
+        - parcial
+        - bloqueado
+        - listo para review
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Criterios de aceptación
+      description: List observable outcomes that prove the story is complete.
+      placeholder: |
+        - [ ] El simulador ejecuta 100 logical requests contra unstable-service.
+        - [ ] Cada logical request realiza exactamente 1 downstream attempt.
+        - [ ] RAF es igual a 1.0 para NO_RETRY.
+    validations:
+      required: true
+
+  - type: textarea
+    id: experiment-rules
+    attributes:
+      label: Reglas de negocio / reglas del experimento
+      description: Capture constraints that must remain true while implementing this story.
+      placeholder: |
+        - No se implementan retries en esta historia.
+        - Los resultados deben ser reproducibles con seed fija.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Fuera de alcance
+      description: Explicitly list tempting work that must not be implemented in this story.
+      placeholder: |
+        - Immediate retry
+        - Exponential backoff
+        - Circuit breaker
+        - Frontend
+    validations:
+      required: true
+
+  - type: textarea
+    id: roadmap-link
+    attributes:
+      label: Relación con roadmap
+      placeholder: |
+        Phase: First Vertical Slice — No Retry
+        Epic: MVP Experiment Baseline
+        Issues técnicas relacionadas: TBD
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Notas técnicas
+      description: Add architecture notes, ADR references, dependencies, or constraints.
+      placeholder: The unstable-service must be reachable through a real HTTP boundary.
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected-evidence
+    attributes:
+      label: Métricas / evidencia esperada
+      description: For this project, every story should say what data or verification proves the outcome.
+      placeholder: |
+        - RAF = 1.0
+        - ./mvnw verify passes
+        - Smoke test documented
+    validations:
+      required: true
