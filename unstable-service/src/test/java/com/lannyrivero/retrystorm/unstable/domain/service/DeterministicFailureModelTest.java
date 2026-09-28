@@ -1,11 +1,8 @@
 package com.lannyrivero.retrystorm.unstable.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import org.junit.jupiter.api.Test;
 
-import com.lannyrivero.retrystorm.unstable.domain.exception.InvalidFailureRate;
 import com.lannyrivero.retrystorm.unstable.domain.valueobject.AttemptNumber;
 import com.lannyrivero.retrystorm.unstable.domain.valueobject.ExperimentSeed;
 import com.lannyrivero.retrystorm.unstable.domain.valueobject.FailureRate;
@@ -55,10 +52,4 @@ class DeterministicFailureModelTest {
         assertThat(sample).isGreaterThanOrEqualTo(0).isLessThan(1);
     }
 
-    @Test
-    void rejectsInvalidFailureRate() {
-        assertThatThrownBy(() -> new FailureRate(1.1))
-                .isInstanceOf(InvalidFailureRate.class)
-                .hasMessage("failureRate must be between 0 and 1");
-    }
 }

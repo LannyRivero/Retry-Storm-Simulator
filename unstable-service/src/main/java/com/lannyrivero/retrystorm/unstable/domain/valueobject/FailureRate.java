@@ -8,7 +8,7 @@ public record FailureRate(double value) {
     public static final FailureRate ALWAYS = new FailureRate(1);
 
     public FailureRate {
-        if (value < 0 || value > 1) {
+        if (!Double.isFinite(value) || value < 0 || value > 1) {
             throw new InvalidFailureRate();
         }
     }
