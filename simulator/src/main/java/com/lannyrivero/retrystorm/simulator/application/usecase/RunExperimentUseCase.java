@@ -1,5 +1,12 @@
 package com.lannyrivero.retrystorm.simulator.application.usecase;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import com.lannyrivero.retrystorm.simulator.application.command.RunExperimentCommand;
 import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyCall;
 import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyCallResult;
@@ -29,18 +36,46 @@ public class RunExperimentUseCase {
 
         ExperimentScenario scenario = command.scenario();
         ExperimentMeasurementAccumulator measurements = new ExperimentMeasurementAccumulator();
+        List<Future<DependencyCallResult>> callResults = dispatchNoRetryCalls(scenario);
 
-        for (int requestNumber = 1; requestNumber <= scenario.logicalRequests().value(); requestNumber++) {
-            DependencyCallResult callResult = dependencyGateway.call(new DependencyCall(
-                    scenario.seed(),
-                    new LogicalRequestId(requestNumber),
-                    FIRST_ATTEMPT,
-                    scenario.failureRate(),
-                    scenario.latency()));
-
-            measurements.recordDownstreamCall(callResult.successful(), callResult.latency());
+        for (Future<DependencyCallResult> callResult : callResults) {
+            DependencyCallResult result = await(callResult);
+            measurements.recordDownstreamCall(result.successful(), result.latency());
         }
 
         return new ExperimentResult(scenario, command.strategy(), measurements.toMeasurements());
+    }
+
+    private List<Future<DependencyCallResult>> dispatchNoRetryCalls(ExperimentScenario scenario) {
+        ExecutorService executor = Executors.newFixedThreadPool(scenario.concurrency().value());
+        List<Future<DependencyCallResult>> callResults = new ArrayList<>();
+
+        try {
+            for (int requestNumber = 1; requestNumber <= scenario.logicalRequests().value(); requestNumber++) {
+                DependencyCall call = new DependencyCall(
+                        scenario.seed(),
+                        new LogicalRequestId(requestNumber),
+                        FIRST_ATTEMPT,
+                        scenario.failureRate(),
+                        scenario.latency());
+
+                callResults.add(executor.submit(() -> dependencyGateway.call(call)));
+            }
+
+            return callResults;
+        } finally {
+            executor.shutdown();
+        }
+    }
+
+    private DependencyCallResult await(Future<DependencyCallResult> callResult) {
+        try {
+            return callResult.get();
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("experiment execution was interrupted", exception);
+        } catch (ExecutionException exception) {
+            throw new IllegalStateException("dependency call failed", exception.getCause());
+        }
     }
 }
