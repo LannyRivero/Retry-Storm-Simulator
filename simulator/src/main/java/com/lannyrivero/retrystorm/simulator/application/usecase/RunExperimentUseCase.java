@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.lannyrivero.retrystorm.simulator.application.command.RunExperimentCommand;
+import com.lannyrivero.retrystorm.simulator.application.exception.ExperimentExecutionFailed;
 import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyCall;
 import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyCallResult;
 import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyGateway;
@@ -73,9 +74,9 @@ public class RunExperimentUseCase {
             return callResult.get();
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("experiment execution was interrupted", exception);
+            throw new ExperimentExecutionFailed("experiment execution was interrupted", exception);
         } catch (ExecutionException exception) {
-            throw new IllegalStateException("dependency call failed", exception.getCause());
+            throw new ExperimentExecutionFailed("dependency call failed", exception.getCause());
         }
     }
 }

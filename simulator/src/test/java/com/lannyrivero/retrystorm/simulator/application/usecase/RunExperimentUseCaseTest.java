@@ -16,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.lannyrivero.retrystorm.simulator.application.command.RunExperimentCommand;
+import com.lannyrivero.retrystorm.simulator.application.exception.ExperimentExecutionFailed;
 import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyCall;
 import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyCallResult;
 import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyGateway;
@@ -95,6 +96,20 @@ class RunExperimentUseCaseTest {
         useCase.run(new RunExperimentCommand(SCENARIO, ResilienceStrategy.NO_RETRY));
 
         assertThat(dependencyGateway.maxConcurrentCalls()).isEqualTo(SCENARIO.concurrency().value());
+    }
+
+    @Test
+    @DisplayName("Wraps dependency call failures as experiment execution failures")
+    void wrapsDependencyCallFailuresAsExperimentExecutionFailures() {
+        RuntimeException dependencyFailure = new RuntimeException("downstream unavailable");
+        RunExperimentUseCase useCase = new RunExperimentUseCase(call -> {
+            throw dependencyFailure;
+        });
+
+        assertThatThrownBy(() -> useCase.run(new RunExperimentCommand(SCENARIO, ResilienceStrategy.NO_RETRY)))
+                .isInstanceOf(ExperimentExecutionFailed.class)
+                .hasMessage("dependency call failed")
+                .hasCause(dependencyFailure);
     }
 
     private static class RecordingDependencyGateway implements DependencyGateway {
