@@ -32,7 +32,7 @@ public class HttpDependencyGateway implements DependencyGateway {
 
         ResponseEntity<DependencyHttpResponse> response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("api/dependency")
+                        .path("/api/dependency")
                         .queryParam("seed", call.seed().value())
                         .queryParam("logicalRequestId", call.logicalRequestId().value())
                         .queryParam("attempt", call.attempt().value())

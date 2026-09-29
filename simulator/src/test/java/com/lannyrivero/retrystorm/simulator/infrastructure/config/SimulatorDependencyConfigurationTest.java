@@ -10,9 +10,9 @@ import com.lannyrivero.retrystorm.simulator.application.port.out.DependencyGatew
 import com.lannyrivero.retrystorm.simulator.infrastructure.adapter.out.http.HttpDependencyGateway;
 
 public class SimulatorDependencyConfigurationTest {
-
-    private  static final String DEPENDENCY_BASE_URL_PROPERTY = "simulator.dependency.base.url=htttp://unstable-service";
-
+    private static final String DEPENDENCY_BASE_URL_PROPERTY =
+        "simulator.dependency.base-url=http://unstable-service";
+        
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withUserConfiguration(SimulatorDependencyConfiguration.class)
             .withPropertyValues(DEPENDENCY_BASE_URL_PROPERTY);
